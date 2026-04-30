@@ -72,6 +72,7 @@ func Shortcuts() []common.Shortcut {
 		BaseFormQuestionsDelete,
 		BaseFormQuestionsUpdate,
 		BaseFormQuestionsList,
+		BaseFormSubmit,
 		BaseDashboardList,
 		BaseDashboardGet,
 		BaseDashboardCreate,

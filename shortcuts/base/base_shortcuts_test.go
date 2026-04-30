@@ -140,6 +140,7 @@ func TestShortcutsCatalog(t *testing.T) {
 		"+data-query",
 		"+form-create", "+form-delete", "+form-list", "+form-update", "+form-get",
 		"+form-questions-create", "+form-questions-delete", "+form-questions-update", "+form-questions-list",
+		"+form-submit",
 		"+dashboard-list", "+dashboard-get", "+dashboard-create", "+dashboard-update", "+dashboard-delete", "+dashboard-arrange",
 		"+dashboard-block-list", "+dashboard-block-get", "+dashboard-block-create", "+dashboard-block-update", "+dashboard-block-delete",
 	}
