@@ -52,11 +52,29 @@ func authLogoutRun(opts *LogoutOptions) error {
 		return nil
 	}
 
+	httpClient, httpErr := f.HttpClient()
+	appSecret, secretErr := core.ResolveSecretInput(app.AppSecret, f.Keychain)
+
 	for _, user := range app.Users {
+		if httpErr == nil && secretErr == nil {
+			if token := larkauth.GetStoredToken(app.AppId, user.UserOpenId); token != nil && token.AccessToken != "" {
+				if err := larkauth.RevokeToken(httpClient, app.AppId, appSecret, app.Brand, token.AccessToken, "access_token"); err != nil {
+					fmt.Fprintf(f.IOStreams.ErrOut, "Warning: failed to revoke token for %s: %v\n", user.UserOpenId, err)
+				}
+			}
+		}
 		if err := larkauth.RemoveStoredToken(app.AppId, user.UserOpenId); err != nil {
 			fmt.Fprintf(f.IOStreams.ErrOut, "Warning: failed to remove token for %s: %v\n", user.UserOpenId, err)
 		}
 	}
+
+	if httpErr != nil {
+		fmt.Fprintf(f.IOStreams.ErrOut, "Warning: failed to initialize HTTP client for token revoke: %v\n", httpErr)
+	}
+	if secretErr != nil {
+		fmt.Fprintf(f.IOStreams.ErrOut, "Warning: failed to resolve app secret for token revoke: %v\n", secretErr)
+	}
+
 	app.Users = []core.AppUser{}
 	if err := core.SaveMultiAppConfig(multi); err != nil {
 		return output.Errorf(output.ExitInternal, "internal", "failed to save config: %v", err)
